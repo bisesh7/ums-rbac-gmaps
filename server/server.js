@@ -1,9 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db.js");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 dotenv.config();
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("Mongo DB connected.");
+  } catch (err) {
+    console.error("MongoDB connection failed.", err);
+    process.exit(1);
+  }
+};
+
 connectDB();
 
 const app = express();
