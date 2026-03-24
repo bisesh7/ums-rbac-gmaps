@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import userRouter from "./routes/users.js";
+import path from "path";
 
 dotenv.config();
 
@@ -25,6 +27,13 @@ app.use(
   }),
 );
 app.use(express.json());
+
+//Serve uploads folder
+const uploadDir = path.join(process.cwd(), "uploads");
+app.use("/uploads", express.static(uploadDir));
+
+// User routes
+app.use("/api/users", userRouter);
 
 const PORT = 5002;
 
