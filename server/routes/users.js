@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -69,13 +70,15 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const profilePicture = `/uploads/${req.file.filename}`;
 
     const user = await User.create({
       username,
       firstName,
       lastName,
-      password,
+      password: hashedPassword,
       profilePicture,
     });
     res.status(201).json(user);
