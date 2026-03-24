@@ -8,3 +8,9 @@ app.use(
   }),
 );
 app.use(express.json());
+
+const PORT = 5002;
+
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
