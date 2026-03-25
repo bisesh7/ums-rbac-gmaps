@@ -131,6 +131,10 @@ router.delete("/:id", protect, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    if (id === process.env.SUPER_ADMIN_ID) {
+      return res.status(403).json({ error: "SuperAdmin cannot be deleted" });
+    }
+
     user.deletedAt = new Date();
     await user.save();
 
