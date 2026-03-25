@@ -18,7 +18,7 @@ A default **SuperAdmin** account is created for testing and administration:
 - **Password:** `superadmin`
 - **Role:** `ADMIN`
 
-> ⚠️ The SuperAdmin account **cannot be deleted or have its role changed**.
+> The SuperAdmin account **cannot be deleted or have its role changed**.
 
 ### 1. Clone the Repository
 
