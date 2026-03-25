@@ -184,7 +184,7 @@ router.put(
       if (!user) return res.status(404).json({ error: "User not found" });
 
       const existingUser = await User.findOne({ username });
-      if (existingUser) {
+      if (existingUser && existingUser._id.toString() !== id) {
         return res.status(400).json({ error: "Username already exists" });
       }
 
