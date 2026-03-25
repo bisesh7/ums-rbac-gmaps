@@ -4,6 +4,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import bcrypt from "bcrypt";
+import { protect } from "../middlewares/protect.js";
 
 const router = express.Router();
 
@@ -84,6 +85,36 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     res.status(201).json(user);
   } catch (err) {
     console.log("Error creating user", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/", protect, async (req, res) => {
+  try {
+    const { role, page = 1, limit = 10 } = req.query;
+
+    const query = { deletedAt: null };
+    if (role && role !== "ALL") {
+      query.role = role;
+    }
+
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    const totalUsers = await User.countDocuments(query);
+
+    const users = await User.find(query)
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    res.status(200).json({
+      users,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limitNum),
+      currentPage: pageNum,
+    });
+  } catch (err) {
+    console.error("Error fetching users", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

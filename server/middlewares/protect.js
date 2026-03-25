@@ -26,7 +26,7 @@ export const protect = async (req, res, next) => {
     req.user = user;
 
     next();
-  } catch {
+  } catch (err) {
     console.error("JWT verification failed", err);
     res.status(401).json({ error: "Unauthorized" });
   }
