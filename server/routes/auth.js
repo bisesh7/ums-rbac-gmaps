@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { protect } from "../middlewares/protect.js";
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post("/login", async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
     const token = jwt.sign(
@@ -54,6 +55,13 @@ router.post("/login", async (req, res) => {
     console.error("Login error", err);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+router.get("/role", protect, (req, res) => {
+  res.status(200).json({
+    id: req.user._id,
+    role: req.user.role,
+  });
 });
 
 export default router;
