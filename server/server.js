@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRouter from "./routes/users.js";
+import authRouter from "./routes/auth.js";
 import path from "path";
 
 dotenv.config();
@@ -34,6 +35,8 @@ app.use("/uploads", express.static(uploadDir));
 
 // User routes
 app.use("/api/users", userRouter);
+// Auth routes
+app.use("/api/auth", authRouter);
 
 const PORT = 5002;
 
