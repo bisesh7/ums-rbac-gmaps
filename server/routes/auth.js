@@ -28,6 +28,10 @@ router.post("/login", async (req, res) => {
         .json({ error: "User role is not assigned by admin" });
     }
 
+    if (user.deletedAt) {
+      return res.status(403).json({ error: "Invalid credentials" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid credentials" });
