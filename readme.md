@@ -10,6 +10,16 @@
 
 ---
 
+## SuperAdmin Account
+
+A default **SuperAdmin** account is created for testing and administration:
+
+- **Username:** `superadmin`
+- **Password:** `superadmin`
+- **Role:** `ADMIN`
+
+> ⚠️ The SuperAdmin account **cannot be deleted or have its role changed**.
+
 ### 1. Clone the Repository
 
 ```bash
