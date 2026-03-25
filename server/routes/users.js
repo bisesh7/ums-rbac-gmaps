@@ -141,4 +141,95 @@ router.delete("/:id", protect, async (req, res) => {
   }
 });
 
+// Update user route
+router.put(
+  "/:id",
+  protect,
+  upload.single("profilePicture"),
+  async (req, res) => {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ error: "Not authorized." });
+      }
+
+      const { id } = req.params;
+      const { username, firstName, lastName, password, role, confirmPassword } =
+        req.body;
+
+      if (!username) {
+        return res.status(400).json({
+          error: "Username is required.",
+        });
+      }
+      if (!firstName) {
+        return res.status(400).json({
+          error: "First name is required.",
+        });
+      }
+      if (!lastName) {
+        return res.status(400).json({
+          error: "Last name is required.",
+        });
+      }
+      if (!role) {
+        return res.status(400).json({
+          error: "Role is required.",
+        });
+      }
+      if (role && !["ADMIN", "ROLE_1", "ROLE_2"].includes(role)) {
+        return res.status(400).json({ error: "Invalid role" });
+      }
+
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      user.username = username;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.role = role;
+
+      if (password) {
+        if (password.length < 6) {
+          return res.status(400).json({
+            error: "Password should at least 6 characters.",
+          });
+        }
+        if (password !== confirmPassword) {
+          return res.status(400).json({
+            error: "Passwords do not match",
+          });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+      }
+
+      if (req.file) {
+        //Delete old image
+        if (user.profilePicture) {
+          const oldPath = path.join(process.cwd(), user.profilePicture);
+
+          if (fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath);
+          }
+        }
+
+        // New image path
+        user.profilePicture = `/uploads/${req.file.filename}`;
+      }
+
+      await user.save();
+
+      res.status(200).json(user);
+    } catch (err) {
+      console.error("Error editing user", err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  },
+);
+
 export default router;
