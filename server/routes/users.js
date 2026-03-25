@@ -195,7 +195,12 @@ router.put(
       user.username = username;
       user.firstName = firstName;
       user.lastName = lastName;
-      user.role = role;
+
+      if (id === process.env.SUPER_ADMIN_ID) {
+        user.role = user.role;
+      } else {
+        user.role = role;
+      }
 
       if (password) {
         if (password.length < 6) {
